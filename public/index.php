@@ -1,32 +1,34 @@
 <?php
 
-define('APP_DIR',	'../app/');
+define('APP_DIR', '../app/');
 
 
 // packages via composer
-require APP_DIR.'vendor/autoload.php';
+require '../vendor/autoload.php';
 
 
 // config file
-require APP_DIR.'config.php';
+require APP_DIR.'config/app.php';
 
 // init framework
-$config = array(
-	'debug'				=> APP_DEBUG,
-    'mode'				=> APP_MODE,
-    'http.version'		=> APP_VERSION,
-    'templates.path'	=> APP_DIR.'templates'
-);
-$app = new \Slim\Slim($config);
+$app = new \Slim\Slim($app_config);
 $app->setName(APP_NAME);
 
 
-// routes
-require APP_DIR.'routes/home.php';
-require APP_DIR.'routes/hello.php';
+// models with CRUD operations
+require APP_DIR.'models/crud.php';
+$models = glob(APP_DIR.'models/*_model.php');
+foreach ($models as $model)
+{
+    require $model;
+}
 
-// error pages
-require APP_DIR.'error.php';
+// routes
+$routes = glob(APP_DIR.'routes/*.php');
+foreach ($routes as $route)
+{
+    require $route;
+}
 
 
 // start app
