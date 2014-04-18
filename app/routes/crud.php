@@ -5,14 +5,14 @@
 $models = array(
 	'UserModel' => array(
 		'noun'		=> 'users',
-		'routes'	=> array('get_list', 'get_one', 'create', 'update')
+		'routes'	=> array('get_list', 'get_one', 'create', 'update', 'delete')
 	)
 	
 	// Examples:
 	/*
 	'ProductModel' => array(
 		'noun'		=> 'products',
-		'routes'	=> array('get_list', 'get_one', 'create', 'update', 'delete')
+		'routes'	=> array('get_list', 'get_one', 'create', 'update')
 	)
 	*/
 );

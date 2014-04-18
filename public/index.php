@@ -9,10 +9,15 @@ require '../vendor/autoload.php';
 
 // config file
 require APP_DIR.'config/app.php';
+require APP_DIR.'config/db.php';
 
 // init framework
 $app = new \Slim\Slim($app_config);
 $app->setName(APP_NAME);
+
+
+// libraries
+require APP_DIR.'lib/api_output.php';
 
 
 // models with CRUD operations

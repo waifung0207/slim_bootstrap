@@ -4,6 +4,7 @@ class CrudModel
 {
 	protected $mApp;
 	protected $mModel;
+	protected $mTable;
 
 	public function __construct($app)
 	{
@@ -11,56 +12,95 @@ class CrudModel
 		$this->mModel = get_called_class();
 	}
 
-	// Override these functions to handle custom logic
+	/**
+	 * Override below functions to handle custom logic
+	 */
+
+	// GET (multiple)
 	public function get_list()
 	{
-		return $this->mModel.': GET /';
+		if (DB_ENGINE=='elasticsearch')
+		{
+			$client = new ES_Client();
+			$response = $client->get_all($this->mTable);
+
+			$this->mApp->contentType('application/json');
+			return ApiOutput::to_json($response);
+		}
+		else
+		{
+			return $this->mModel.': GET /';
+		}
 	}
+
+	// GET (single)
 	public function get_one($id)
 	{
-		return $this->mModel.': GET /'.$id;
+		if (DB_ENGINE=='elasticsearch')
+		{
+			// get from ElasticSearch
+			$client = new ES_Client();
+			$response = $client->get($this->mTable, $id);
+
+			$this->mApp->contentType('application/json');
+			return ApiOutput::to_json($response);
+		}
+		else
+		{
+			return $this->mModel.': GET /'.$id;
+		}
 	}
+
+	// CREATE
 	public function create()
 	{
-		return $this->mModel.': POST /';
+		if (DB_ENGINE=='elasticsearch')
+		{
+			$client = new ES_Client();
+			$params = array('name' => 'new user');
+			$response = $client->create($this->mTable, $params);
+
+			$this->mApp->contentType('application/json');
+			return ApiOutput::to_json($response);
+		}
+		else
+		{
+			return $this->mModel.': POST /';
+		}
 	}
+
+	// UPDATE
 	public function update($id)
 	{
-		return $this->mModel.': PUT /'.$id;
+		if (DB_ENGINE=='elasticsearch')
+		{
+			$client = new ES_Client();
+			$params = array('name' => 'update value');
+			$response = $client->update($this->mTable, $id, $params);
+
+			$this->mApp->contentType('application/json');
+			return ApiOutput::to_json($response);
+		}
+		else
+		{
+			return $this->mModel.': PUT /'.$id;
+		}
 	}
+
+	// DELETE
 	public function delete($id)
 	{
-		return $this->mModel.': DELETE /'.$id;
-	}
+		if (DB_ENGINE=='elasticsearch')
+		{
+			$client = new ES_Client();
+			$response = $client->delete($this->mTable, $id);
 
-	// JSON result
-	protected function to_json($data)
-	{
-		// return info for debug purpose (optional)
-		$debug_data = debug_backtrace();
-		$caller_class = $debug_data[1]['class'];
-		$caller_func = $debug_data[1]['function'];
-
-		// JSON response
-		$this->mApp->contentType('application/json');
-		$result = array(
-			'app_name'		=> APP_NAME,
-			'app_version'	=> APP_VERSION,
-			'app_function'	=> $caller_class.'::'.$caller_func,
-			'data'			=> $data
-		);
-		return json_encode($result);
-	}
-
-	// results for empty records, 404, invalid operations
-	protected function to_invalid()
-	{
-		$this->mApp->contentType('application/json');
-		$result = array(
-			'app_name'		=> APP_NAME,
-			'app_version'	=> APP_VERSION,
-			'result'		=> 'invalid'
-		);
-		return json_encode($result);
+			$this->mApp->contentType('application/json');
+			return ApiOutput::to_json($response);
+		}
+		else
+		{
+			return $this->mModel.': DELETE /'.$id;
+		}
 	}
 }

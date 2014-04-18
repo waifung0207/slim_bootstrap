@@ -2,6 +2,13 @@
 
 class UserModel extends CrudModel
 {
+	protected $mTable = 'users';
+
+	/**
+	 * Examples of overriding CrudModel functions
+	 */
+
+	/*
 	// dummy data
 	private $users = array(
 		0 => array('id' => 1, 'name' => 'Michael'),
@@ -12,27 +19,28 @@ class UserModel extends CrudModel
 	// get list of users
 	public function get_list()
 	{
-		return $this->to_json($this->users);
+		return ApiOutput::to_json($this->users);
 	}
 
 	// get single user
 	public function get_one($id)
 	{
 		if ( empty($this->users[$id-1]) )
-			return $this->to_invalid();
+			return ApiOutput::to_invalid();
 		else
-			return $this->to_json($this->users[$id-1]);
+			return ApiOutput::to_json($this->users[$id-1]);
 	}
 
 	// create new user
 	public function create()
 	{
-		return $this->to_json('Record created.');
+		return ApiOutput::to_json($response);
 	}
 
 	// update a user
 	public function update($id)
 	{
-		return $this->to_json('Record updated');
+		return ApiOutput::to_json('Record updated');
 	}
+	*/
 }

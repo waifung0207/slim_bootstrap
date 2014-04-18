@@ -1,6 +1,6 @@
 <?php
 
-define('APP_DEBUG',		true);
+define('APP_DEBUG',		TRUE);
 define('APP_MODE',		'development');
 
 define('APP_NAME',		'Slim Bootstrap');
