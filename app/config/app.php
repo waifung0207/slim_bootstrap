@@ -19,5 +19,5 @@ $app_config = array(
 	'debug'				=> APP_DEBUG,
     'mode'				=> APP_MODE,
     'http.version'		=> APP_VERSION,
-    'templates.path'	=> APP_DIR.'templates'
+    'templates.path'	=> APP_DIR.'views'
 );

@@ -1,40 +1,25 @@
 <?php
 
-define('APP_DIR', '../app/');
-
+// path constants
+define('BASE_DIR', str_replace('public', '', __DIR__) );
+define('APP_DIR', BASE_DIR.'app/');
 
 // packages via composer
 require '../vendor/autoload.php';
 
-
-// config file
+// config
 require APP_DIR.'config/app.php';
 require APP_DIR.'config/db.php';
 
-// init framework
+// autoloader for classes
+require APP_DIR.'autoload.php';
+
+// init app
 $app = new \Slim\Slim($app_config);
 $app->setName(APP_NAME);
 
-
-// libraries
-require APP_DIR.'lib/api_output.php';
-
-
-// models with CRUD operations
-require APP_DIR.'models/crud.php';
-$models = glob(APP_DIR.'models/*_model.php');
-foreach ($models as $model)
-{
-    require $model;
-}
-
 // routes
-$routes = glob(APP_DIR.'routes/*.php');
-foreach ($routes as $route)
-{
-    require $route;
-}
-
+require APP_DIR.'routes.php';
 
 // start app
 $app->run();

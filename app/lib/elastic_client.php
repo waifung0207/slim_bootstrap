@@ -1,9 +1,10 @@
 <?php
 
 /**
- * Official Repository: https://github.com/elasticsearch/elasticsearch-php
+ * Official Repository: 
+ * 	- https://github.com/elasticsearch/elasticsearch-php
  */
-class ES_Client
+class ElasticClient
 {
 	private $mClient;
 
@@ -49,7 +50,7 @@ class ES_Client
 		}
 
 		// create Elasticsearch client
-		$this->mClient = new Elasticsearch\Client($params);
+		$this->mClient = new \Elasticsearch\Client($params);
 	}
 
 	/**
