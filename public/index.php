@@ -17,6 +17,7 @@ require APP_DIR.'autoload.php';
 // init app
 $app = new \Slim\Slim($app_config);
 $app->setName(APP_NAME);
+$app->add(new OutputMiddleware());
 
 // routes
 require APP_DIR.'routes.php';

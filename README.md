@@ -1,4 +1,2 @@
 
-Basic structure for Slim Framework app.
-
-Reference: http://www.slimframework.com/news/how-to-organize-a-large-slim-framework-application
+Basic structure for Slim Framework app which aims at API implementation.

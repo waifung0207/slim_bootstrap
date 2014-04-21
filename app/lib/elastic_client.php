@@ -72,16 +72,29 @@ class ElasticClient
 		// sample:
 		$params['body']['settings']['number_of_shards'] = 2;
 		$params['body']['settings']['number_of_replicas'] = 0;
-
-		$response = $this->mClient->indices()->create($params);
-		return $response;
+		
+		try
+		{
+			return $this->mClient->indices()->create($params);
+		}
+		catch (Exception $e)
+		{
+			return json_decode($e->getMessage());
+		}
 	}
 	function delete_index($index)
 	{
 		$params = array();
 		$params['index'] = $index;
-		$response = $this->mClient->indices()->delete($params);
-		return $response;
+
+		try
+		{
+			return $this->mClient->indices()->delete($params);
+		}
+		catch (Exception $e)
+		{
+			return json_decode($e->getMessage());
+		}
 	}
 
 	/**
@@ -95,8 +108,14 @@ class ElasticClient
 		$params['type']		= $table;
 		$params['body']['query']['match_all'] = array();
 
-		$response = $this->mClient->deleteByQuery($params);
-		return $response;
+		try
+		{
+			return $this->mClient->deleteByQuery($params);
+		}
+		catch (Exception $e)
+		{
+			return json_decode($e->getMessage());
+		}
 	}
 	
 	/**
@@ -119,8 +138,14 @@ class ElasticClient
 		// $params['routing'] = 'company_xyz';
 		// $params['timestamp'] = strtotime("-1d");
 
-		$response = $this->mClient->index($params);
-		return $response;
+		try
+		{
+			return $this->mClient->index($params);
+		}
+		catch (Exception $e)
+		{
+			return json_decode($e->getMessage());
+		}
 	}
 	
 	/**

@@ -1,14 +1,6 @@
 <?php
 
 /**
- * Custom routes
- */
-$app->get('/', function () use ($app) {
-	$app->render('home.php');
-})->name('home');
-
-
-/**
  * List out functions to models
  */
 $models = array(
@@ -143,9 +135,14 @@ foreach ($models as $model => $params)
 
 
 /**
- * Error routes
+ * Error handling
  */
+
 $app->notFound(function () use ($app) {
-	$view_data = array('home_url' => $app->urlFor('home'));
-    $app->render('404.php', $view_data, 404);
+	$app->render('404.php', array(), 404);
+});
+
+$app->error(function (\Exception $e) use ($app) {
+	$view_data = array('msg' => $e->getMessage());
+	$app->render('error.php', $view_data);
 });

@@ -1,8 +1,8 @@
 <?php
 
 $result = array(
-	'status'	=> 404,
-	'msg'		=> 'Not Found'
+	'status'	=> 500,
+	'msg'		=> 'Server Error'
 );
 
 echo json_encode($result);
