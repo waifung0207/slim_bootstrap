@@ -2,25 +2,25 @@
 
 class OutputMiddleware extends \Slim\Middleware
 {
-    public function call()
-    {
-        // Get reference to application
-        $app = $this->app;
+	public function call()
+	{
+		// Get reference to application
+		$app = $this->app;
 
-        // Run inner middleware and application
-        $this->next->call();
+		// Run inner middleware and application
+		$this->next->call();
 
-        // Return response body as JSON
+		// Return response body as JSON
 		$app->contentType('application/json');
-        $response = $app->response;
-        $status = $response->getStatus();
+		$response = $app->response;
+		$status = $response->getStatus();
 
-        // bypass when invalid operation is found
-        if ($status!=200)
-        	return;
+		// bypass when invalid operation is found
+		if ($status!=200)
+			return;
 
-        // prepare array to store all info returned
-        $result = array();
+		// prepare array to store all info returned
+		$result = array();
 		$result['app_name']		= APP_NAME;
 		$result['app_version']	= APP_VERSION;
 		$result['status']		= $status;
@@ -45,6 +45,6 @@ class OutputMiddleware extends \Slim\Middleware
 		$json_option = (APP_DEBUG) ? JSON_PRETTY_PRINT : 0;
 		$body = json_encode($result, $json_option);
 
-        $response->setBody($body);
-    }
+		$response->setBody($body);
+	}
 }

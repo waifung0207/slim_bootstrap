@@ -39,7 +39,6 @@ foreach ($models as $model => $params)
 	$base_routes = empty($params['base_routes']) ? array() : $params['base_routes'];
 	$custom_routes = empty($params['custom_routes']) ? array() : $params['custom_routes'];
 
-
 	/**
 	 * Define route group
 	 */
@@ -158,7 +157,6 @@ if (APP_DEBUG)
 /**
  * Error handling
  */
-
 $app->notFound(function () use ($app) {
 	$app->render('404.php', array(), 404);
 });
