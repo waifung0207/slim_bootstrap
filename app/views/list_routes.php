@@ -1,5 +1,6 @@
 <html>
   <head>
+  	<title>Route List</title>
   	<style>
   	table {
   		border-collapse: collapse;
@@ -39,43 +40,38 @@
 		foreach ($base_routes as $route)
 		{
 			$link = '';
+			$url = "/$noun";
+			$name = $noun.'.'.$route;
 
 			switch ($route)
 			{
 				case 'get_list':
 					$method = "GET";
-					$url = "/$noun";
-					$name = $noun.'.'.$route;
 					$link = $app->urlFor($name);
 					break;
 
 				// GET (single)
 				case 'get_one':
 					$method = "GET";
-					$url = "/$noun/:id";
-					$name = $noun.'.'.$route;
+					$url.= "/:id";
 					$link = $app->urlFor($name, array('id' => 1));
 					break;
 
 				// CREATE
 				case 'create':
 					$method = "CREATE";
-					$url = "/$noun";
-					$name = $noun.'.'.$route;
 					break;
 
 				// UPDATE
 				case 'update':
 					$method = "UPDATE";
-					$url = "/$noun/:id";
-					$name = $noun.'.'.$route;
+					$url.= "/:id";
 					break;
 
 				// DELETE
 				case 'delete':
 					$method = "DELETE";
-					$url = "/$noun/:id";
-					$name = $noun.'.'.$route;
+					$url.= "/:id";
 					break;
 			}
 
@@ -109,7 +105,7 @@
 					break;
 
 				// CREATE
-				case 'post':
+				case 'create':
 					foreach ($routes as $route)
 					{
 						$method = "POST";
@@ -123,7 +119,7 @@
 					break;
 
 				// UPDATE
-				case 'put':
+				case 'update':
 					foreach ($routes as $route)
 					{
 						$method = "PUT";

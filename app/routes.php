@@ -9,8 +9,8 @@ $models = array(
 		'base_routes'	=> array('get_list', 'get_one', 'create', 'update', 'delete'),
 		'custom_routes'	=> array(
 			'get'			=> array('followers', 'posts'),
-			'post'			=> array('post'),
-			'put'			=> array('password')
+			'create'		=> array('post'),
+			'update'		=> array('password')
 		)
 	),
 
@@ -39,111 +39,106 @@ foreach ($models as $model => $params)
 	$base_routes = empty($params['base_routes']) ? array() : $params['base_routes'];
 	$custom_routes = empty($params['custom_routes']) ? array() : $params['custom_routes'];
 
-	/**
-	 * Base routes, 5 basic methods which are defined in BaseController and BaseModel:
-	 * 	- get_list: obtain multiple items
-	 * 	- get_one: obtain single item
-	 * 	- create: create single item
-	 * 	- update: update single item
-	 * 	- delete: delete single item
-	 */
-	foreach ($base_routes as $route)
-	{
-		switch ($route)
-		{
-			// GET (multiple)
-			case 'get_list':
-				$url = "/$noun";
-				$name = $noun.'.'.$route;
-				$app->get($url, $ctrler.':'.$route)->name($name);
-				break;
-
-			// GET (single)
-			case 'get_one':
-				$url = "/$noun/:id";
-				$name = $noun.'.'.$route;
-				$app->get($url, $ctrler.':'.$route)->name($name);
-				break;
-
-			// CREATE
-			case 'create':
-				$url = "/$noun";
-				$name = $noun.'.'.$route;
-				$app->post($url, $ctrler.':'.$route)->name($name);
-				break;
-
-			// UPDATE
-			case 'update':
-				$url = "/$noun/:id";
-				$name = $noun.'.'.$route;
-				$app->put($url, $ctrler.':'.$route)->name($name);
-				break;
-
-			// DELETE
-			case 'delete':
-				$url = "/$noun/:id";
-				$name = $noun.'.'.$route;
-				$app->delete($url, $ctrler.':'.$route)->name($name);
-				break;
-		}
-	}
 
 	/**
-	 * Custom routes for different actions, e.g.:
-	 *  - GET 		/users/2/followers		=> UserController@get_followers
-	 *  - POST 		/posts/5/comment 		=> PostController@create_comment
-	 * 	- PUT 		/users/1/password 		=> UserController@update_password
-	 *  - DELETE 	/posts/6/comment 		=> PostController@delete_comment
+	 * Define route group
 	 */
-	foreach ($custom_routes as $action => $routes)
+	$app->group('/'.$noun, function () use ($app, $noun, $ctrler, $base_routes, $custom_routes)
 	{
-		switch ($action)
+		/**
+		 * Base routes, 5 basic methods which are defined in BaseController and BaseModel:
+		 * 	- get_list: obtain multiple items
+		 * 	- get_one: obtain single item
+		 * 	- create: create single item
+		 * 	- update: update single item
+		 * 	- delete: delete single item
+		 */
+		foreach ($base_routes as $route)
 		{
-			// GET
-			case 'get':
-				foreach ($routes as $route)
-				{
-					$url = "/$noun/:id/".$route;
-					$route = 'get_'.$route;
-					$name = $noun.'.'.$route;
-					$app->get($url, $ctrler.':'.$route)->name($name);
-				}
-				break;
+			$target = $ctrler.':'.$route;
+			$name = $noun.'.'.$route;
 
-			// CREATE
-			case 'post':
-				foreach ($routes as $route)
-				{
-					$url = "/$noun/:id/".$route;
-					$route = 'create_'.$route;
-					$name = $noun.'.'.$route;
-					$app->post($url, $ctrler.':'.$route)->name($name);
-				}
-				break;
+			switch ($route)
+			{
+				// GET (multiple)
+				case 'get_list':
+					$app->get('', $target)->name($name);
+					break;
 
-			// UPDATE
-			case 'put':
-				foreach ($routes as $route)
-				{
-					$url = "/$noun/:id/".$route;
-					$route = 'update_'.$route;
-					$name = $noun.'.'.$route;
-					$app->put($url, $ctrler.':'.$route)->name($name);
-				}
-				break;
+				// GET (single)
+				case 'get_one':
+					$app->get('/:id', $target)->name($name);
+					break;
 
-			// DELETE
-			case 'delete':
-				foreach ($routes as $route)
-				{
-					$url = "/$noun/:id/".$route;
-					$route = 'delete_'.$route;
-					$name = $noun.'.'.$route;
-					$app->delete($url, $ctrler.':'.$route)->name($name);
-				}
-				break;
+				// CREATE
+				case 'create':
+					$app->post('', $target)->name($name);
+					break;
+
+				// UPDATE
+				case 'update':
+					$app->put('/:id', $target)->name($name);
+					break;
+
+				// DELETE
+				case 'delete':
+					$app->delete('/:id', $target)->name($name);
+					break;
+			}
 		}
-	}
+
+		/**
+		 * Custom routes for different actions, e.g.:
+		 *  - GET 		/users/2/followers		=> UserController@get_followers
+		 *  - POST 		/posts/5/comment 		=> PostController@create_comment
+		 * 	- PUT 		/users/1/password 		=> UserController@update_password
+		 *  - DELETE 	/posts/6/comment 		=> PostController@delete_comment
+		 */
+		foreach ($custom_routes as $method => $routes)
+		{
+			$target_prefix = $ctrler.':'.$method.'_';
+			$name_prefix = $noun.'.'.$method.'_';
+
+			switch ($method)
+			{
+				// GET
+				case 'get':
+					foreach ($routes as $route)
+					{
+						$url = "/:id/".$route;
+						$app->get($url, $target_prefix.$route)->name($name_prefix.$route);
+					}
+					break;
+
+				// CREATE
+				case 'create':
+					foreach ($routes as $route)
+					{
+						$url = "/:id/".$route;
+						$app->post($url, $target_prefix.$route)->name($name_prefix.$route);
+					}
+					break;
+
+				// UPDATE
+				case 'update':
+					foreach ($routes as $route)
+					{
+						$url = "/:id/".$route;
+						$app->put($url, $target_prefix.$route)->name($name_prefix.$route);
+					}
+					break;
+
+				// DELETE
+				case 'delete':
+					foreach ($routes as $route)
+					{
+						$url = "/:id/".$route;
+						$app->delete($url, $target_prefix.$route)->name($name_prefix.$route);
+					}
+					break;
+			}
+		}
+	});
 }
 
 
