@@ -6,7 +6,7 @@
 $models = array(
 	'User' => array(
 		'noun'			=> 'users',
-		'rest_routes'	=> array('get_list', 'get_one', 'create', 'update', 'delete'),
+		'base_routes'	=> array('get_list', 'get_one', 'create', 'update', 'delete'),
 		'custom_routes'	=> array(
 			'get'			=> array('followers', 'posts'),
 			'post'			=> array('post'),
@@ -20,7 +20,7 @@ $models = array(
 	/*
 	'Post' => array(
 		'noun'			=> 'posts',
-		'rest_routes'	=> array('get_list', 'get_one'),
+		'base_routes'	=> array('get_list', 'get_one'),
 		'custom_routes'	=> array(
 			'get'			=> array('comments'),
 		)
@@ -36,49 +36,54 @@ foreach ($models as $model => $params)
 	$noun = $params['noun'];
 	$ctrler = $model.'Controller';
 
-	$rest_routes = empty($params['rest_routes']) ? array() : $params['rest_routes'];
+	$base_routes = empty($params['base_routes']) ? array() : $params['base_routes'];
 	$custom_routes = empty($params['custom_routes']) ? array() : $params['custom_routes'];
 
 	/**
-	 * RESTful routes, 5 basic actions are defined in BaseController and BaseModel:
+	 * Base routes, 5 basic methods which are defined in BaseController and BaseModel:
 	 * 	- get_list: obtain multiple items
 	 * 	- get_one: obtain single item
 	 * 	- create: create single item
 	 * 	- update: update single item
 	 * 	- delete: delete single item
 	 */
-	foreach ($rest_routes as $route)
+	foreach ($base_routes as $route)
 	{
 		switch ($route)
 		{
 			// GET (multiple)
 			case 'get_list':
 				$url = "/$noun";
-				$app->get($url, $ctrler.':'.$route);
+				$name = $noun.'.'.$route;
+				$app->get($url, $ctrler.':'.$route)->name($name);
 				break;
 
 			// GET (single)
 			case 'get_one':
 				$url = "/$noun/:id";
-				$app->get($url, $ctrler.':'.$route);
+				$name = $noun.'.'.$route;
+				$app->get($url, $ctrler.':'.$route)->name($name);
 				break;
 
 			// CREATE
 			case 'create':
 				$url = "/$noun";
-				$app->post($url, $ctrler.':'.$route);
+				$name = $noun.'.'.$route;
+				$app->post($url, $ctrler.':'.$route)->name($name);
 				break;
 
 			// UPDATE
 			case 'update':
 				$url = "/$noun/:id";
-				$app->put($url, $ctrler.':'.$route);
+				$name = $noun.'.'.$route;
+				$app->put($url, $ctrler.':'.$route)->name($name);
 				break;
 
 			// DELETE
 			case 'delete':
 				$url = "/$noun/:id";
-				$app->delete($url, $ctrler.':'.$route);
+				$name = $noun.'.'.$route;
+				$app->delete($url, $ctrler.':'.$route)->name($name);
 				break;
 		}
 	}
@@ -99,7 +104,9 @@ foreach ($models as $model => $params)
 				foreach ($routes as $route)
 				{
 					$url = "/$noun/:id/".$route;
-					$app->get($url, $ctrler.':get_'.$route);
+					$route = 'get_'.$route;
+					$name = $noun.'.'.$route;
+					$app->get($url, $ctrler.':'.$route)->name($name);
 				}
 				break;
 
@@ -108,7 +115,9 @@ foreach ($models as $model => $params)
 				foreach ($routes as $route)
 				{
 					$url = "/$noun/:id/".$route;
-					$app->post($url, $ctrler.':create_'.$route);
+					$route = 'create_'.$route;
+					$name = $noun.'.'.$route;
+					$app->post($url, $ctrler.':'.$route)->name($name);
 				}
 				break;
 
@@ -117,7 +126,9 @@ foreach ($models as $model => $params)
 				foreach ($routes as $route)
 				{
 					$url = "/$noun/:id/".$route;
-					$app->put($url, $ctrler.':update_'.$route);
+					$route = 'update_'.$route;
+					$name = $noun.'.'.$route;
+					$app->put($url, $ctrler.':'.$route)->name($name);
 				}
 				break;
 
@@ -126,11 +137,26 @@ foreach ($models as $model => $params)
 				foreach ($routes as $route)
 				{
 					$url = "/$noun/:id/".$route;
-					$app->delete($url, $ctrler.':delete'.$route);
+					$route = 'delete_'.$route;
+					$name = $noun.'.'.$route;
+					$app->delete($url, $ctrler.':'.$route)->name($name);
 				}
 				break;
 		}
 	}
+}
+
+
+/**
+ * For debug only
+ */
+if (APP_DEBUG)
+{
+	$app->get('/util/routes', function() use($app, $models) {
+		$view_data = array('app' => $app, 'models' => $models);
+		$app->render('list_routes.php', $view_data);
+		exit();
+	});
 }
 
 
